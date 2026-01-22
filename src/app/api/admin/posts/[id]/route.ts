@@ -1,3 +1,5 @@
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -5,10 +7,9 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // ←ここをPromiseに修正
 ) {
   try {
-    // await params を追加して、IDを安全に取得するように修正
     const { id } = await params; 
     const postId = parseInt(id);
 
@@ -27,6 +28,6 @@ export async function GET(
     return NextResponse.json(post);
   } catch (error) {
     console.error("詳細取得エラー:", error);
-    return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
+    return NextResponse.json({ error: "サーバーエラー" }, { status: 500 });
   }
 }
